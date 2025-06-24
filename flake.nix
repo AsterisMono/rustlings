@@ -26,6 +26,7 @@
             pre-commit
             rustPackages.clippy
             rust-analyzer
+            rustlings
           ];
           RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
         };
