@@ -1,4 +1,5 @@
-{ pkgs, lib, config, inputs, ... }:
+{ pkgs, ... }:
 {
   languages.rust.enable = true;
+  packages = with pkgs; [ rustlings ];
 }
