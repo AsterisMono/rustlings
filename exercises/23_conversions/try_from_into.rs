@@ -28,14 +28,44 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
 
-    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {}
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let r = 0..=255;
+        if r.contains(&(tuple.0 as i32))
+            && r.contains(&(tuple.1 as i32))
+            && r.contains(&(tuple.2 as i32))
+        {
+            Ok(Color {
+                red: tuple.0 as u8,
+                green: tuple.1 as u8,
+                blue: tuple.2 as u8,
+            })
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
+    }
 }
 
 // TODO: Array implementation.
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {}
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let r = 0..=255;
+        if arr.map(|i| r.contains(&(i as i32))).iter().fold(
+            true,
+            |acc, cur| {
+                if !cur { false } else { acc }
+            },
+        ) {
+            Ok(Color {
+                red: arr[0] as u8,
+                green: arr[1] as u8,
+                blue: arr[2] as u8,
+            })
+        } else {
+            Err(IntoColorError::IntConversion)
+        }
+    }
 }
 
 // TODO: Slice implementation.
@@ -43,7 +73,26 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {}
+    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if let [r, g, b] = slice {
+            let tuple = (*r, *g, *b);
+            let range = 0..=255;
+            if range.contains(&(tuple.0 as i32))
+                && range.contains(&(tuple.1 as i32))
+                && range.contains(&(tuple.2 as i32))
+            {
+                Ok(Color {
+                    red: tuple.0 as u8,
+                    green: tuple.1 as u8,
+                    blue: tuple.2 as u8,
+                })
+            } else {
+                Err(IntoColorError::IntConversion)
+            }
+        } else {
+            Err(IntoColorError::BadLen)
+        }
+    }
 }
 
 fn main() {
